@@ -20,6 +20,8 @@ backups/
 images/login_bg.png
 
 # Build artifacts
+web/node_modules/
+web/dist/
 web/Dev/.build/
 web/Dev/config/
 web/Dev/logs/

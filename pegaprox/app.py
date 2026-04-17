@@ -107,7 +107,11 @@ def create_app():
 
     @app.before_request
     def validate_request():
-        if request.path.startswith('/static/') or request.path.startswith('/images/'):
+        if (
+            request.path.startswith('/static/')
+            or request.path.startswith('/images/')
+            or request.path.startswith('/assets/')
+        ):
             return None
         if request.path.startswith('/ws'):
             return None

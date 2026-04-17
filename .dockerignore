@@ -9,4 +9,6 @@ __pycache__
 *.db
 *.db-journal
 web/Dev/.build/
+web/node_modules/
+web/dist/
 ssl/
