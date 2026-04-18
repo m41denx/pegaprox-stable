@@ -1,0 +1,27 @@
+{
+  "name": "pegaprox-web",
+  "private": true,
+  "version": "0.9.6.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build:legacy": "node scripts/bundle-legacy.mjs",
+    "build": "pnpm run build:legacy && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.6",
+    "@vitejs/plugin-react": "^4.3.4",
+    "esbuild": "^0.25.12",
+    "typescript": "~5.8.3",
+    "vite": "^6.2.6"
+  }
+}

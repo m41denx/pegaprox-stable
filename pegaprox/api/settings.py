@@ -2665,10 +2665,51 @@ def add_cors_origin():
     })
 
 # API Routes
+def _spa_index_path():
+    """Vite build output (web/dist) when present; else legacy web/index.html."""
+    dist_index = os.path.join(WEB_DIR, 'dist', 'index.html')
+    if os.path.isfile(dist_index):
+        return os.path.join(WEB_DIR, 'dist'), 'index.html'
+    return WEB_DIR, 'index.html'
+
+
 @bp.route('/')
 def index():
-    """Serve the web interface"""
-    return send_from_directory(WEB_DIR, 'index.html')
+    """Serve the web interface (Vite SPA from web/dist when built)."""
+    directory, name = _spa_index_path()
+    return send_from_directory(directory, name)
+
+
+@bp.route('/assets/<path:filename>')
+def vite_assets(filename):
+    """Hashed JS/CSS from Vite build (web/dist/assets)."""
+    assets_dir = os.path.join(WEB_DIR, 'dist', 'assets')
+    if not os.path.isdir(assets_dir):
+        return '', 404
+    path = os.path.join(assets_dir, filename)
+    if not os.path.isfile(path) or not os.path.realpath(path).startswith(os.path.realpath(assets_dir) + os.sep):
+        return '', 404
+    return send_from_directory(assets_dir, filename)
+
+
+@bp.route('/legacy-app.js')
+def legacy_app_bundle():
+    """Pre-compiled legacy SPA bundle (esbuild output in web/dist)."""
+    dist_dir = os.path.join(WEB_DIR, 'dist')
+    path = os.path.join(dist_dir, 'legacy-app.js')
+    if not os.path.isfile(path):
+        return '', 404
+    return send_from_directory(dist_dir, 'legacy-app.js', mimetype='application/javascript')
+
+
+@bp.route('/legacy-ui-shell.html')
+def legacy_ui_shell():
+    """HTML shell for the legacy UI iframe (same-origin /api and cookies)."""
+    dist_dir = os.path.join(WEB_DIR, 'dist')
+    path = os.path.join(dist_dir, 'legacy-ui-shell.html')
+    if not os.path.isfile(path):
+        return '', 404
+    return send_from_directory(dist_dir, 'legacy-ui-shell.html', mimetype='text/html; charset=utf-8')
 
 
 @bp.route('/status')
@@ -2721,7 +2762,8 @@ def oidc_callback_page():
     Identity providers redirect here with ?code=xxx&state=yyy
     The frontend JS picks up the params and calls the API callback endpoint
     """
-    return send_from_directory(WEB_DIR, 'index.html')
+    directory, name = _spa_index_path()
+    return send_from_directory(directory, name)
 
 @bp.route('/api/status', methods=['GET'])
 def get_status():

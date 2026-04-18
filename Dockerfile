@@ -1,3 +1,11 @@
+# --- Frontend (Vite → web/dist) ---
+FROM node:22-bookworm-slim AS webbuilder
+WORKDIR /build
+COPY web/package.json web/pnpm-lock.yaml ./
+RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY web/ ./
+RUN pnpm run build
+
 FROM python:3.12-slim
 
 LABEL org.label-schema.name="PegaProx"
@@ -26,6 +34,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY --chown=pegaprox:pegaprox pegaprox_multi_cluster.py .
 COPY --chown=pegaprox:pegaprox pegaprox/ pegaprox/
 COPY --chown=pegaprox:pegaprox web/ web/
+COPY --chown=pegaprox:pegaprox --from=webbuilder /build/dist web/dist
 COPY --chown=pegaprox:pegaprox static/ static/
 COPY --chown=pegaprox:pegaprox images/ images/
 COPY --chown=pegaprox:pegaprox version.json .
