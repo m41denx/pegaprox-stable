@@ -111,6 +111,8 @@ def create_app():
             request.path.startswith('/static/')
             or request.path.startswith('/images/')
             or request.path.startswith('/assets/')
+            or request.path == '/legacy-app.js'
+            or request.path == '/legacy-ui-shell.html'
         ):
             return None
         if request.path.startswith('/ws'):

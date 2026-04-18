@@ -2692,6 +2692,26 @@ def vite_assets(filename):
     return send_from_directory(assets_dir, filename)
 
 
+@bp.route('/legacy-app.js')
+def legacy_app_bundle():
+    """Pre-compiled legacy SPA bundle (esbuild output in web/dist)."""
+    dist_dir = os.path.join(WEB_DIR, 'dist')
+    path = os.path.join(dist_dir, 'legacy-app.js')
+    if not os.path.isfile(path):
+        return '', 404
+    return send_from_directory(dist_dir, 'legacy-app.js', mimetype='application/javascript')
+
+
+@bp.route('/legacy-ui-shell.html')
+def legacy_ui_shell():
+    """HTML shell for the legacy UI iframe (same-origin /api and cookies)."""
+    dist_dir = os.path.join(WEB_DIR, 'dist')
+    path = os.path.join(dist_dir, 'legacy-ui-shell.html')
+    if not os.path.isfile(path):
+        return '', 404
+    return send_from_directory(dist_dir, 'legacy-ui-shell.html', mimetype='text/html; charset=utf-8')
+
+
 @bp.route('/status')
 def status_page():
     """Serve public status page — only if plugin is enabled"""

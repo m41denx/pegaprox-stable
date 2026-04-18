@@ -22,6 +22,8 @@ images/login_bg.png
 # Build artifacts
 web/node_modules/
 web/dist/
+web/public/legacy-app.js
+web/public/legacy-ui-shell.html
 web/Dev/.build/
 web/Dev/config/
 web/Dev/logs/
