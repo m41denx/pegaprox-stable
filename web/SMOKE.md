@@ -1,19 +1,15 @@
 # Manual smoke checklist (web UI)
 
-## Production-like (Flask serves `web/dist/`)
+Run the Flask server, then either:
 
-1. From repo root: `cd web && pnpm install && pnpm build`
-2. Run PegaProx so `/` serves `web/dist/index.html` and `/assets/*` + `/legacy-app.js` + `/legacy-ui-shell.html` are reachable (same origin as `/api`).
-3. Open `/` in the browser.
+- **Production-like:** `cd web && pnpm install && pnpm build`, open `https://<host>:<port>/` (or http). Flask must serve `web/dist/` (see `pegaprox/api/settings.py`).
+- **Dev:** `cd web && pnpm dev` with API proxied to the backend (`vite.config.ts` `server.proxy` → `127.0.0.1:5000`).
 
-## Dev (`pnpm dev`)
+Checks:
 
-1. Start the Flask API on port 5000 (Vite proxies `/api` to `127.0.0.1:5000`).
-2. `cd web && pnpm dev` — open the printed URL.
-3. The UI loads inside an **iframe** pointing at `/legacy-ui-shell.html` (full legacy app: login, dashboard, modals, VNC/xterm, charts, PDF, i18n).
-
-## Checks
-
-1. Login and session reload.
-2. Cluster list, VM modals, node shell / VNC if used.
-3. OIDC callback still hits `/oidc/callback` (top-level); the shell is the same as before, only the bundle is precompiled instead of Babel-in-browser.
+1. **Login** — Local user signs in; invalid password shows an error; optional TOTP step appears when required.
+2. **Session** — Reload page while logged in; still authenticated (`GET /api/auth/check`).
+3. **Logout** — Sign out clears session and returns to login.
+4. **Clusters** — After login, cluster list loads from `GET /api/clusters` and selection persists (localStorage).
+5. **Theme** — Theme buttons change accent; logged-in users persist via `PUT /api/user/preferences`.
+6. **OIDC** — With OIDC enabled: “Sign in with SSO” requests authorize URL; callback on `/oidc/callback` exchanges code (full flow needs real IdP).

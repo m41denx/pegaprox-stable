@@ -1,5 +1,11 @@
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { LegacyPegaproxUI } from "@/LegacyPegaproxUI";
+import { App } from "@/App";
+import "@/index.css";
 
-createRoot(document.getElementById("root")!).render(<LegacyPegaproxUI />);
+createRoot(document.getElementById("root")!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+);
